@@ -12,7 +12,7 @@ class Product(models.Model):
         ('new', 'New'),
         ('popular', 'Popular'),
     )
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active', max_length=20)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
     description = models.TextField()
     stock = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -23,7 +23,7 @@ class Product(models.Model):
         ('female', 'Female'),
         ('both', 'Both'),
     )
-    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='both', max_length=10)
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='both')
     category = models.ForeignKey('Category', on_delete=models.SET_NULL, null=True, blank=True)
     brand = models.ForeignKey('Brand', on_delete=models.SET_NULL, null=True, blank=True)
     image_url = models.ForeignKey('Image', on_delete=models.SET_NULL, null=True, blank=True)
@@ -46,7 +46,7 @@ class Brand(models.Model):
     
 class Image(models.Model):
     """ Create an image model """
-    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    Product = models.ForeignKey('Product', on_delete=models.CASCADE)
     url = models.URLField()
     def __str__(self):
         return self.url
