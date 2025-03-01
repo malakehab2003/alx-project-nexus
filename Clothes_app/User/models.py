@@ -95,12 +95,18 @@ class Notification(models.Model):
 
     def __str__(self):
         """Return user name"""
-        return self.user.name
+        return f"{self.user.name} - Notification"
     
 class Payment(models.Model):
     """Create a payment model"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="payments")
-    provider = models.CharField(max_length=50)
+    PROVIDER_CHOICES = [
+            ("stripe", "Stripe"),
+            ("paypal", "Paypal"),
+            ("google_pay", "Google Pay"),
+            ("apple_pay", "Apple Pay"),
+        ]
+    provider = models.CharField(max_length=50, choices=PROVIDER_CHOICES)
     payment_id = models.CharField(max_length=100)
     last4 = models.CharField(max_length=4)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -108,4 +114,4 @@ class Payment(models.Model):
 
     def __str__(self):
         """Return user name"""
-        return self.user.name
+        return f"{self.user.name} - Payment"
