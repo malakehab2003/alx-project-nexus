@@ -58,5 +58,20 @@ class Review(models.Model):
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    Image = models.ForeignKey('Image', on_delete=models.SET_NULL, null=True, blank=True)
     def __str__(self):
         return self.message
+    
+class Size(models.Model):
+    """ Create a size model """
+    Product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    name = models.CharField(max_length=10)
+    def __str__(self):
+        return self.name
+    
+class Color(models.Model):
+    """ Create a color model """
+    Product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    name = models.CharField(max_length=10)
+    def __str__(self):
+        return self.name
