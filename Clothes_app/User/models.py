@@ -38,7 +38,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=15, unique=True)
+    phone = models.CharField(max_length=15, unique=False)
     GENDER_CHOICES = [("Male", "Male"), ("Female", "Female")]
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True, blank=True)
     image_url = models.URLField(null=True, blank=True)
