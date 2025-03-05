@@ -65,4 +65,3 @@ class AddressViewSet(viewsets.ModelViewSet):
         
         address.delete()
         return Response({"message": "Address deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
-# fix id

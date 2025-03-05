@@ -32,7 +32,6 @@ def get_validated_token_from_request(request):
     
 def get_user_id_from_token(token):
     """ get the id of the user from the jwt token """
-    token = validate_token(token)
     user_id = token.get("user_id")
     return user_id
     

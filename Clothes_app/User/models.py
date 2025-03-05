@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from rest_framework_simplejwt.tokens import RefreshToken
 
 def validateEmailPassword(email, password):
     """Validate email and password"""
@@ -32,6 +31,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     """Custom user model"""
     last_login = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
+    is_superuser = models.BooleanField(default=False)
 
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
@@ -46,8 +46,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_deleted = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
 
-    groups = None
-    user_permissions = None
+    groups = models.ManyToManyField("auth.Group", related_name="custom_user_groups", blank=True)
+    user_permissions = models.ManyToManyField("auth.Permission", related_name="custom_user_permissions", blank=True)
 
 
     USERNAME_FIELD = 'email'

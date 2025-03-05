@@ -5,8 +5,8 @@ from rest_framework import status
 from ..utils.validate import validate_email, validate_password, validate_args_not_none
 from ..utils.jwt import JWT
 from ..utils.redis import Redis
-from ..models import User, Address, PromoCode, Notification, Payment
-from ..serialzers import UserSerializer, AddressSerializer, PromoCodeSerializer, NotificationSerializer, PaymentSerializer
+from ..models import User, PromoCode, Notification, Payment
+from ..serialzers import UserSerializer, PromoCodeSerializer, NotificationSerializer, PaymentSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import ValidationError
@@ -70,6 +70,20 @@ class UserViewSet(viewsets.ModelViewSet):
         """Create a user"""
         verrification_code = request.data.get("verification_code")
         email = request.data.get("email")
+        restricted_fields = [
+            "is_staff",
+            "is_superuser",
+            "is_active",
+            "is_deleted",
+            "is_verified"
+        ]
+
+        for field in restricted_fields:
+            if field in request.data:
+                return Response(
+                    {"error": f"You are not allowed to add {field}."},
+                    status=status.HTTP_403_FORBIDDEN
+                )
 
         try:
             validate_email(email)
@@ -208,10 +222,24 @@ class UserViewSet(viewsets.ModelViewSet):
     
     def update(self, request, *args, **kwargs):
         """ update user """
-        password = request.data.get("password")
+        restricted_fields = [
+            "is_staff",
+            "is_superuser",
+            "password",
+            "is_active",
+            "is_deleted",
+            "is_verified"
+        ]
         email = request.data.get("email")
         id = kwargs.get("pk")
         user = get_user_from_request(request)
+
+        for field in restricted_fields:
+            if field in request.data:
+                return Response(
+                    {"error": f"You are not allowed to update {field}."},
+                    status=status.HTTP_403_FORBIDDEN
+                )
 
         try:
             validate_args_not_none(id, user)
@@ -228,11 +256,6 @@ class UserViewSet(viewsets.ModelViewSet):
         
         if user["email"] != email:
             return Response({"error": "Email can't be updated"}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            validate_password(password)
-        except ValidationError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
         return super().update(request, *args, **kwargs)
 
