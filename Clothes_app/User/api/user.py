@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
-from ..utils.validate import validate_email, validate_password, validate_args
+from ..utils.validate import validate_email, validate_password, validate_args_not_none
 from ..utils.jwt import JWT
 from ..utils.redis import Redis
 from ..models import User, Address, PromoCode, Notification, Payment
@@ -12,6 +12,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.exceptions import ValidationError
 from ..utils.create_verification import create_verification_and_send_email
 from ..permissions import isOwnerOrForbidden
+from ..utils.authentication import get_user_from_request
 
 User = get_user_model()
 
@@ -27,6 +28,7 @@ class UserViewSet(viewsets.ModelViewSet):
             "resend_verification",
             "forget_password",
             "reset_password",
+            "list"
         ]
 
     def get_permissions(self):
@@ -53,7 +55,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
-            validate_args(name)
+            validate_args_not_none(name)
         except ValidationError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -200,19 +202,37 @@ class UserViewSet(viewsets.ModelViewSet):
         Redis.delete_data_from_redis(email)
 
         return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
+    
+    def update(self, request, *args, **kwargs):
+        """ update user """
+        password = request.data.get("password")
+        email = request.data.get("email")
+        id = kwargs.get("pk")
+        user = get_user_from_request(request)
 
+        try:
+            validate_args_not_none(id, user)
+        except ValidationError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        if not id:
+            return Response({"error": "id is required"}, status=status.HTTP_400_BAD_REQUEST)
         
+        try:
+            validate_email(email)
+        except ValidationError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
+        if user["email"] != email:
+            return Response({"error": "Email can't be updated"}, status=status.HTTP_400_BAD_REQUEST)
 
+        try:
+            validate_password(password)
+        except ValidationError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
+        return super().update(request, *args, **kwargs)
 
-
-
-class AddressViewSet(viewsets.ModelViewSet):
-    """ViewSet for the Address model."""
-    queryset = Address.objects.all()
-    serializer_class = AddressSerializer
-    permission_classes = [IsAuthenticated]
 
 
 class PromoCodeViewSet(viewsets.ModelViewSet):

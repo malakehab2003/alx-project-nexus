@@ -1,7 +1,7 @@
 import re
 from rest_framework.exceptions import ValidationError
 
-def validate_args(*args):
+def validate_args_not_none(*args):
     """Validate the arguments"""
     for arg in args:
         if not arg:
