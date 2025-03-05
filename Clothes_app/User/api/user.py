@@ -13,6 +13,7 @@ from rest_framework.exceptions import ValidationError
 from ..utils.create_verification import create_verification_and_send_email
 from ..permissions import isOwnerOrForbidden
 from ..utils.authentication import get_user_from_request
+from ..utils.authentication import get_user_id_from_token
 
 User = get_user_model()
 
@@ -91,7 +92,8 @@ class UserViewSet(viewsets.ModelViewSet):
         data = UserSerializer(user).data
 
         access_token = JWT.create_token(user)
-        Redis.save_data_in_redis(access_token, user=data, timeout=604800)
+        user_id = get_user_id_from_token(access_token)
+        Redis.save_data_in_redis(user_id, user=data, timeout=604800)
 
         user_data = UserSerializer(user).data
         return Response({"access_token": access_token, "user": user_data}, status=status.HTTP_201_CREATED)
@@ -126,9 +128,10 @@ class UserViewSet(viewsets.ModelViewSet):
         access_token = JWT.create_token(user)
 
         user_data = UserSerializer(user).data
+        user_id = user_data["id"]
 
-        if not Redis.check_data_in_redis(access_token):
-            Redis.save_data_in_redis(access_token, user=user_data, timeout=604800)
+        if not Redis.check_data_in_redis(user_id):
+            Redis.save_data_in_redis(user_id, user=user_data, timeout=604800)
 
 
         return Response({"access_token": access_token, "user": user_data}, status=status.HTTP_200_OK)

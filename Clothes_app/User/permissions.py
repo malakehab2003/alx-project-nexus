@@ -19,7 +19,5 @@ class IsOwnerOrForbidden(BasePermission):
         """Ensure the user is modifying their own data"""
         if isinstance(obj, User):
             return obj.id == request.user["id"]
-        elif isinstance(obj, Address):
-            return obj.user.id == request.user["id"]
 
 isOwnerOrForbidden = IsOwnerOrForbidden()
