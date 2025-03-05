@@ -5,8 +5,8 @@ from rest_framework import status
 from ..utils.validate import validate_email, validate_password, validate_args_not_none
 from ..utils.jwt import JWT
 from ..utils.redis import Redis
-from ..models import User, PromoCode, Notification, Payment
-from ..serialzers import UserSerializer, PromoCodeSerializer, NotificationSerializer, PaymentSerializer
+from ..models import User, Payment
+from ..serialzers import UserSerializer, PaymentSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import ValidationError
@@ -258,21 +258,6 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({"error": "Email can't be updated"}, status=status.HTTP_400_BAD_REQUEST)
         
         return super().update(request, *args, **kwargs)
-
-
-
-class PromoCodeViewSet(viewsets.ModelViewSet):
-    """ViewSet for the PromoCode model."""
-    queryset = PromoCode.objects.all()
-    serializer_class = PromoCodeSerializer
-    permission_classes = [IsAuthenticated]
-
-
-class NotificationViewSet(viewsets.ModelViewSet):
-    """ViewSet for the Notification model."""
-    queryset = Notification.objects.all()
-    serializer_class = NotificationSerializer
-    permission_classes = [IsAuthenticated]
 
 
 class PaymentViewSet(viewsets.ModelViewSet):

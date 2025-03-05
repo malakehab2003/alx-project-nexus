@@ -25,7 +25,7 @@ class PromoCodeViewSet(mixins.ListModelMixin,
         user_id = get_user_from_request(self.request).get("id")
         if not user_id:
             return PromoCode.objects.none()
-        return PromoCode.objects.filter(user_id=user_id)
+        return PromoCode.objects.filter(user=user_id)
     
     @action(detail=True, methods=['post'], url_path="apply_code")
     def apply_promo_code(self, request, *args, **kwargs):
