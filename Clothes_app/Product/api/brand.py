@@ -7,6 +7,7 @@ from ..serialzers import BrandSerializer, ProductSerializer
 
 
 class BrandViewSet(mixins.RetrieveModelMixin,
+                   mixins.ListModelMixin,
                        viewsets.GenericViewSet):
     """ViewSet for the Brand model."""
     queryset = Brand.objects.all()
@@ -20,6 +21,6 @@ class BrandViewSet(mixins.RetrieveModelMixin,
         if not brand_id:
             return Response({"error": "required id"}, status=status.HTTP_400_BAD_REQUEST)
         
-        products = Product.objects.filter(brand=brand_id)
+        products = Product.objects.filter(brands=brand_id)
         serializer = ProductSerializer(products, many=True)
         return Response({"products": serializer.data}, status=status.HTTP_200_OK)
