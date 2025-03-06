@@ -1,17 +1,19 @@
-from django.shortcuts import render
-from rest_framework import viewsets
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
-from .models import Product, Category, Brand, Image, Review, Size, Color
-from .serializers import ProductSerializer, CategorySerializer, BrandSerializer, ImageSerializer, ReviewSerializer, SizeSerializer, ColorSerializer
+from ..models import Product, Category, Brand, Image, Review, Size, Color
+from ..serialzers import ProductSerializer, CategorySerializer, BrandSerializer, ImageSerializer, ReviewSerializer, SizeSerializer, ColorSerializer
 
-class ProductViewSet(viewsets.ModelViewSet):
+class ProductViewSet(mixins.ListModelMixin,
+                       mixins.RetrieveModelMixin,
+                       viewsets.GenericViewSet):
     """ViewSet for the Product model."""
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
+
+
+
+
 
 class CategoryViewSet(viewsets.ModelViewSet):
     """ViewSet for the Category model."""
