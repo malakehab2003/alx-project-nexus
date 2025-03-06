@@ -26,7 +26,6 @@ class Product(models.Model):
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='both')
     category = models.ForeignKey('Category', on_delete=models.SET_NULL, null=True, blank=True)
     brand = models.ForeignKey('Brand', on_delete=models.SET_NULL, null=True, blank=True)
-    image_url = models.ForeignKey('Image', on_delete=models.SET_NULL, null=True, blank=True)
     def __str__(self):
         return self.name
     

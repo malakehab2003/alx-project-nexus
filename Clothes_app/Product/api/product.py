@@ -12,15 +12,6 @@ class ProductViewSet(mixins.ListModelMixin,
     permission_classes = [IsAuthenticated]
 
 
-
-
-
-class CategoryViewSet(viewsets.ModelViewSet):
-    """ViewSet for the Category model."""
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated]
-
 class BrandViewSet(viewsets.ModelViewSet):
     """ViewSet for the Brand model."""
     queryset = Brand.objects.all()
