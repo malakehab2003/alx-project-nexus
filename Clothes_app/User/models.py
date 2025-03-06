@@ -109,7 +109,7 @@ class Payment(models.Model):
         ]
     provider = models.CharField(max_length=50, choices=PROVIDER_CHOICES)
     payment_id = models.CharField(max_length=100)
-    last4 = models.CharField(max_length=4)
+    last4 = models.DecimalField(max_digits=4, decimal_places=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
