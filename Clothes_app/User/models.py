@@ -41,7 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=15, unique=False)
     GENDER_CHOICES = [("Male", "Male"), ("Female", "Female")]
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True, blank=True)
-    image_url = models.URLField(null=True, blank=True)
+    user_image = models.ImageField(upload_to="user_photo", null=True, blank=True)
     is_verified = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)

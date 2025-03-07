@@ -42,9 +42,12 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'Product',
     'Shop',
+    'drf_yasg',
+    'drf_spectacular',
 ]
 
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
@@ -145,6 +148,11 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+
+import os
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Password validation

@@ -1,4 +1,5 @@
 from django.db import models
+from User.models import User
 
 class Category(models.Model):
     """ Create a category model """
@@ -48,11 +49,11 @@ class Product(models.Model):
     
 class Image(models.Model):
     """ Create an image model """
-    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    product = models.ForeignKey('Product', on_delete=models.CASCADE, null=True, blank=True)
     review = models.ForeignKey('Review', on_delete=models.CASCADE, null=True, blank=True)
-    url = models.URLField()
-    def __str__(self):
-        return self.url
+    image = models.ImageField(upload_to='product_images/', null=True, blank=True)
+    image_url = models.URLField(blank=True, null=True)
     
 class Review(models.Model):
     """ Create a review model """

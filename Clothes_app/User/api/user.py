@@ -12,7 +12,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.exceptions import ValidationError
 from ..utils.create_verification import create_verification_and_send_email
 from ..permissions import isOwnerOrForbidden
-from ..utils.authentication import get_user_from_request
+from ..utils.authentication import get_user_from_request, validate_token
 from ..utils.authentication import get_user_id_from_token
 
 User = get_user_model()
@@ -106,7 +106,8 @@ class UserViewSet(viewsets.ModelViewSet):
         data = UserSerializer(user).data
 
         access_token = JWT.create_token(user)
-        user_id = get_user_id_from_token(access_token)
+        validated_token = validate_token(access_token)
+        user_id = get_user_id_from_token(validated_token)
         Redis.save_data_in_redis(user_id, user=data, timeout=604800)
 
         user_data = UserSerializer(user).data

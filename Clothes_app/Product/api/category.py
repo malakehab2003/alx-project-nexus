@@ -7,6 +7,7 @@ from ..serialzers import CategorySerializer, ProductSerializer
 
 
 class CategoryViewSet(mixins.RetrieveModelMixin,
+                      mixins.ListModelMixin,
                        viewsets.GenericViewSet):
     """ViewSet for the Category model."""
     queryset = Category.objects.all()
