@@ -14,6 +14,7 @@ from ..utils.create_verification import create_verification_and_send_email
 from ..permissions import isOwnerOrForbidden
 from ..utils.authentication import get_user_from_request, validate_token
 from ..utils.authentication import get_user_id_from_token
+from rest_framework.parsers import MultiPartParser, FormParser
 
 User = get_user_model()
 
@@ -21,6 +22,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """ViewSet for the User model."""
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    parser_classes = (MultiPartParser, FormParser)
 
     no_auth_actions = [
             "create",

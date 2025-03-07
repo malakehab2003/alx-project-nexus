@@ -57,6 +57,7 @@ class Image(models.Model):
     
 class Review(models.Model):
     """ Create a review model """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     product = models.ForeignKey('Product', on_delete=models.CASCADE)
     rate = models.DecimalField(max_digits=3, decimal_places=1)
     message = models.TextField()

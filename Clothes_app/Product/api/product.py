@@ -1,7 +1,7 @@
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
-from ..models import Product, Image, Review, Size, Color
-from ..serialzers import ProductSerializer, ImageSerializer, ReviewSerializer, SizeSerializer, ColorSerializer
+from ..models import Product, Size, Color
+from ..serialzers import ProductSerializer, SizeSerializer, ColorSerializer
 
 class ProductViewSet(mixins.ListModelMixin,
                        mixins.RetrieveModelMixin,
@@ -9,12 +9,6 @@ class ProductViewSet(mixins.ListModelMixin,
     """ViewSet for the Product model."""
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated]
-
-class ReviewViewSet(viewsets.ModelViewSet):
-    """ViewSet for the Review model."""
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated]
 
 class SizeViewSet(viewsets.ModelViewSet):

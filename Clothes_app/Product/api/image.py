@@ -6,8 +6,7 @@ from rest_framework.decorators import action
 from User.utils.authentication import get_user_from_request
 from ..serialzers import ImageSerializer
 from ..models import Image, Product, User, Review
-from django.shortcuts import get_object_or_404
-
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 class ImageViewSet(mixins.CreateModelMixin,
@@ -16,6 +15,7 @@ class ImageViewSet(mixins.CreateModelMixin,
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
 
     def create(self, request, *args, **kwargs):
         """ user add image to review """
@@ -36,7 +36,7 @@ class ImageViewSet(mixins.CreateModelMixin,
 
         if serializer.is_valid():
             serializer.save(user=user, review=review)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({"message": "image added successfully"}, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
