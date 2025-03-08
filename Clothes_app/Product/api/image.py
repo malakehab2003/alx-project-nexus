@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from User.utils.authentication import get_user_from_request
 from ..serialzers import ImageSerializer
-from ..models import Image, Product, Review
+from ..models import Image, Product
 
 
 class ImageViewSet(viewsets.GenericViewSet):  
