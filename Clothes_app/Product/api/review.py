@@ -7,8 +7,6 @@ from User.utils.authentication import get_user_from_request
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser
-
 
 
 class ReviewViewSet(mixins.CreateModelMixin,
@@ -17,7 +15,6 @@ class ReviewViewSet(mixins.CreateModelMixin,
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated]
-    # parser_classes = (MultiPartParser, FormParser)
 
     def calculte_final_rate(self, product_rate, new_rate):
         """ take the new rate and add to the rate of the product """
@@ -43,7 +40,6 @@ class ReviewViewSet(mixins.CreateModelMixin,
         rate = request.data.get("rate")
         message = request.data.get("message")
         image = request.data.get("image")
-        image_url = request.data.get("image_url")
 
         validated_rate = self.validate_rate(rate)
 
@@ -62,16 +58,8 @@ class ReviewViewSet(mixins.CreateModelMixin,
             user=user,
             product=product,
             rate=validated_rate,
-            message=message
+            message=message,
+            image=image
         )
 
-        if image or image_url:
-            Image.objects.create(user=user, review=review, image=image, image_url=image_url)
         return Response(ReviewSerializer(review).data, status=status.HTTP_201_CREATED)
-
-
-
-
-
-
-

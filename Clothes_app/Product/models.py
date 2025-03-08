@@ -51,9 +51,7 @@ class Image(models.Model):
     """ Create an image model """
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     product = models.ForeignKey('Product', on_delete=models.CASCADE, null=True, blank=True)
-    review = models.ForeignKey('Review', on_delete=models.CASCADE, null=True, blank=True)
     image = models.ImageField(upload_to='product_images/', null=True, blank=True)
-    image_url = models.URLField(blank=True, null=True)
     
 class Review(models.Model):
     """ Create a review model """
@@ -63,6 +61,8 @@ class Review(models.Model):
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    image = models.ImageField(upload_to='review_images/', null=True, blank=True)
+
     def __str__(self):
         return self.message
     
