@@ -7,13 +7,18 @@ from Product.models import Product, Color, Size
 class Cart(models.Model):
     """ Create a card model """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    total_price = models.IntegerField(default=0)
+    def __str__(self):
+        return f"{self.user.name} - Cart"
+    
+class CartItems(models.Model):
+    """ Create cart items model """
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.IntegerField()
-    total_price = models.IntegerField(default=0)
-    color = models.ForeignKey(Color, on_delete=models.SET_NULL, null=True, blank=True)
-    size = models.ForeignKey(Size, on_delete=models.SET_NULL, null=True, blank=True)
-    def __str__(self):
-        return f"{self.User.name} - Cart"
+    color = models.ForeignKey(Color, on_delete=models.SET_NULL, blank=True, null=True)
+    size = models.ForeignKey(Size, on_delete=models.SET_NULL, blank=True, null=True)
+
     
 class Wishlist(models.Model):
     """ Create a wishlist model """
@@ -56,9 +61,9 @@ class Orders(models.Model):
 class OrderItem(models.Model):
     """ Create an order items model """
     order = models.ForeignKey(Orders, on_delete=models.CASCADE)
-    Product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.IntegerField()
-    color = models.CharField(max_length=50)
-    size = models.CharField(max_length=50)
+    color = models.ForeignKey(Color, on_delete=models.SET_NULL, blank=True, null=True)
+    size = models.ForeignKey(Size, on_delete=models.SET_NULL, blank=True, null=True)
     def __str__(self):
         return f"{self.order.user.name} - Order Items"

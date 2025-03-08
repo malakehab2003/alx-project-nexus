@@ -1,17 +1,10 @@
-from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from .models import Cart, Orders, OrderItem, Wishlist
-from .serializers import CartSerializer, OrdersSerializer, OrderItemSerializer, WishlistSerializer
-
-class CartViewSet(viewsets.ModelViewSet):
-    """ViewSet for the Cart model."""
-    queryset = Cart.objects.all()
-    serializer_class = CartSerializer
-    permission_classes = [IsAuthenticated]
+from .models import Orders, OrderItem, Wishlist
+from .serializers import OrdersSerializer, OrderItemSerializer, WishlistSerializer
 
 class OrdersViewSet(viewsets.ModelViewSet):
     """ViewSet for the Orders model."""

@@ -1,11 +1,17 @@
 from rest_framework import serializers
-from .models import Cart, Wishlist, Orders, OrderItem
+from .models import Cart, Wishlist, Orders, OrderItem, CartItems
 
 class CartSerializer(serializers.ModelSerializer):
     """Serializer for the Cart model."""
     class Meta:
         model = Cart
         fields = '__all__'
+
+class CartItemsSerializer(serializers.ModelSerializer):
+    """Serializer for the cart items model."""
+    class Meta:
+        model= CartItems
+        fields= '__all__'
 
 class WishlistSerializer(serializers.ModelSerializer):
     """Serializer for the Wishlist model."""

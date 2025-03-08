@@ -14,6 +14,7 @@ from ..utils.create_verification import create_verification_and_send_email
 from ..permissions import isOwnerOrForbidden
 from ..utils.authentication import get_user_from_request, validate_token, get_user_id_from_token, get_token_from_request
 from django.shortcuts import get_object_or_404
+from Shop.models import Cart
 
 
 User = get_user_model()
@@ -68,8 +69,11 @@ class UserViewSet(viewsets.ModelViewSet):
     
     def create(self, request):
         """Create a user"""
+        # get data from request
         verrification_code = request.data.get("verification_code")
         email = request.data.get("email")
+
+        # check data
         restricted_fields = [
             "is_staff",
             "is_superuser",
@@ -93,25 +97,34 @@ class UserViewSet(viewsets.ModelViewSet):
         if not Redis.check_data_in_redis(email):
             return Response({"error": "Data not found in Redis"}, status=status.HTTP_400_BAD_REQUEST)
         
+        # get saved data
         user_data = Redis.get_data_from_redis(email)
         if user_data["verification_code"] != verrification_code:
             return Response({"error": "Invalid verification code"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # remove verification_code and add verified
         del user_data["verification_code"]
         user_data["is_verified"] = True
 
+        # create user object and remove cached data
         user = User.objects.create_user(email=email, **user_data)
         Redis.delete_data_from_redis(email)
 
+        # serialize data
         data = UserSerializer(user).data
 
+        # create user cart
+        Cart.objects.create(
+            user = user
+        )
+
+        # create token and validate and save user data in cache
         access_token, refresh_token = JWT.create_token(user)
         validated_token = validate_token(access_token)
         user_id = get_user_id_from_token(validated_token)
         Redis.save_data_in_redis(user_id, user=data, timeout=604800)
 
-        user_data = UserSerializer(user).data
-        return Response({"access_token": access_token, "refresh_token": refresh_token, "user": user_data}, status=status.HTTP_201_CREATED)
+        return Response({"access_token": access_token, "refresh_token": refresh_token, "user": data}, status=status.HTTP_201_CREATED)
 
     
     @action(detail=False, methods=["post"], url_path="signin")
