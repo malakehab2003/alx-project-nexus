@@ -231,11 +231,13 @@ class UserViewSet(viewsets.ModelViewSet):
             "password",
             "is_active",
             "is_deleted",
-            "is_verified"
+            "is_verified",
+            "email",
         ]
-        email = request.data.get("email")
-        id = kwargs.get("pk")
-        user = get_user_from_request(request)
+
+        id_from_url_params = kwargs.get("pk")
+        user_id_from_token = get_user_from_request(request).get("id")
+
 
         for field in restricted_fields:
             if field in request.data:
@@ -245,22 +247,15 @@ class UserViewSet(viewsets.ModelViewSet):
                 )
 
         try:
-            validate_args_not_none(id, user)
-        except ValidationError as e:
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-        if not id:
-            return Response({"error": "id is required"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        try:
-            validate_email(email)
+            validate_args_not_none(id_from_url_params, user_id_from_token)
+            id_from_url_params = int(id_from_url_params)
         except ValidationError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
-        if user["email"] != email:
-            return Response({"error": "Email can't be updated"}, status=status.HTTP_400_BAD_REQUEST)
+        if user_id_from_token != id_from_url_params:
+            return Response({"error": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
         
-        return super().update(request, *args, **kwargs)
+        return super().update(request, *args, **kwargs, partial=True)
     
     @action(detail=False, methods=["post"], url_path="signout")
     def signout(self, request, *args, **kwargs):
