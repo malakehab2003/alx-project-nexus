@@ -12,9 +12,9 @@ from django.contrib.auth import get_user_model
 from rest_framework.exceptions import ValidationError
 from ..utils.create_verification import create_verification_and_send_email
 from ..permissions import isOwnerOrForbidden
-from ..utils.authentication import get_user_from_request, validate_token
-from ..utils.authentication import get_user_id_from_token
-from rest_framework.parsers import MultiPartParser, FormParser
+from ..utils.authentication import get_user_from_request, validate_token, get_user_id_from_token, get_token_from_request
+from django.shortcuts import get_object_or_404
+
 
 User = get_user_model()
 
@@ -22,8 +22,6 @@ class UserViewSet(viewsets.ModelViewSet):
     """ViewSet for the User model."""
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    parser_classes = (MultiPartParser, FormParser)
-
     no_auth_actions = [
             "create",
             "validate_email",
@@ -107,14 +105,13 @@ class UserViewSet(viewsets.ModelViewSet):
 
         data = UserSerializer(user).data
 
-        access_token = JWT.create_token(user)
+        access_token, refresh_token = JWT.create_token(user)
         validated_token = validate_token(access_token)
         user_id = get_user_id_from_token(validated_token)
         Redis.save_data_in_redis(user_id, user=data, timeout=604800)
 
         user_data = UserSerializer(user).data
-        return Response({"access_token": access_token, "user": user_data}, status=status.HTTP_201_CREATED)
-    
+        return Response({"access_token": access_token, "refresh_token": refresh_token, "user": user_data}, status=status.HTTP_201_CREATED)
 
     
     @action(detail=False, methods=["post"], url_path="signin")
@@ -142,16 +139,19 @@ class UserViewSet(viewsets.ModelViewSet):
         if not user.check_password(password):
             return Response({"error": "Invalid password"}, status=status.HTTP_400_BAD_REQUEST)
 
-        access_token = JWT.create_token(user)
+        access_token, refresh_token = JWT.create_token(user)
 
         user_data = UserSerializer(user).data
         user_id = user_data["id"]
+
+        user.is_active = True
+        user.save()
 
         if not Redis.check_data_in_redis(user_id):
             Redis.save_data_in_redis(user_id, user=user_data, timeout=604800)
 
 
-        return Response({"access_token": access_token, "user": user_data}, status=status.HTTP_200_OK)
+        return Response({"access_token": access_token, "refresh_token": refresh_token, "user": user_data}, status=status.HTTP_200_OK)
     
     @action(detail=False, methods=["post"], url_path="resend_verification")
     def resend_verification(self, request):
@@ -261,3 +261,41 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({"error": "Email can't be updated"}, status=status.HTTP_400_BAD_REQUEST)
         
         return super().update(request, *args, **kwargs)
+    
+    @action(detail=False, methods=["post"], url_path="signout")
+    def signout(self, request, *args, **kwargs):
+        """ sign out the user and expire his access token and blacklist his refresh token """
+        refresh_token = request.data.get("refresh_token")
+        access_token = get_token_from_request(request)
+        valdated_token = validate_token(access_token)
+        user_id = get_user_id_from_token(valdated_token)
+
+        user = get_object_or_404(User, id=user_id)
+
+        if not refresh_token:
+            return Response({"error": "refresh token is requried"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            JWT.blacklist_refresh_token(str(refresh_token))
+            user.is_active = False
+            user.save()
+            Redis.delete_data_from_redis(user.id)
+            return Response({"message": "sign out successfully"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], url_path="refresh_token")
+    def refresh_token(self, request, *args, **kwargs):
+        """ refresh the access token """
+        refresh_token = request.data.get("refresh_token")
+
+        if not refresh_token:
+            return Response({"error": "refresh token is requried"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            new_token = JWT.get_new_access_token(refresh_token)
+            return Response({"access_token": new_token}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error": "can't refresh token"}, status=status.HTTP_400_BAD_REQUEST)
+
+

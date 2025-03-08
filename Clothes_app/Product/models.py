@@ -20,7 +20,7 @@ class Product(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    rate = models.DecimalField(max_digits=3, decimal_places=1)
+    rate = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
     STATUS_CHOICES = (
         ('active', 'Active'),
         ('out_of_stock', 'Out_of_stock'),
@@ -40,8 +40,8 @@ class Product(models.Model):
     )
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='both')
 
-    brands = models.ManyToManyField(Brand, related_name="products")
-    category = models.ManyToManyField(Category, related_name="products")
+    brands = models.ManyToManyField(Brand, related_name="products", blank=True)
+    category = models.ManyToManyField(Category, related_name="products", blank=True)
 
     def __str__(self):
         return self.name

@@ -2,6 +2,8 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import get_user_model
 from ..utils.redis import Redis
 from ..serialzers import UserSerializer
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.tokens import AccessToken
 
 
 User = get_user_model()
@@ -19,15 +21,20 @@ def validate_token(token):
         return auth.get_validated_token(token)
     except Exception:
         return None
-
-def get_validated_token_from_request(request):
-    """Get the validated token from the request"""
+    
+def get_token_from_request(request):
+    """ get token from request without validation """
     header = request.headers.get("Authorization")
     token = remove_prefix_from_header_return_token(header)
 
     if not token:
         return None
+    return token
 
+def get_validated_token_from_request(request):
+    """Get the validated token from the request"""
+    token = get_token_from_request(request)
+    
     return validate_token(token)
     
 def get_user_id_from_token(token):
