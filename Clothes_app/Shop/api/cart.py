@@ -3,8 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from ..models import Cart, CartItems
-from Product.models import Product, Color, Size
-from ..serializers import CartSerializer, CartItemsSerializer
+from ..serializers import CartSerializer
 from User.utils.authentication import get_user_from_request
 from django.shortcuts import get_object_or_404
 

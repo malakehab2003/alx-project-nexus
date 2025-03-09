@@ -19,6 +19,9 @@ class CartItems(models.Model):
     color = models.ForeignKey(Color, on_delete=models.SET_NULL, blank=True, null=True)
     size = models.ForeignKey(Size, on_delete=models.SET_NULL, blank=True, null=True)
 
+    def __str__(self):
+        return f"{self.cart.user.name} - cart item"
+
     
 class Wishlist(models.Model):
     """ Create a wishlist model """
