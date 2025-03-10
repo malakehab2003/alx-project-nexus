@@ -29,6 +29,19 @@ class OrdersSerializer(serializers.ModelSerializer):
 
 class OrderItemSerializer(serializers.ModelSerializer):
     """Serializer for the OrderItem model."""
+    color_name = serializers.SerializerMethodField()
+    size_name = serializers.SerializerMethodField()
+    product_name = serializers.SerializerMethodField()
+
     class Meta:
         model = OrderItem
         fields = '__all__'
+
+    def get_color_name(self, obj):
+        return obj.color.name if obj.color else None
+
+    def get_size_name(self, obj):
+        return obj.size.name if obj.size else None
+    
+    def get_product_name(self, obj):
+        return obj.product.name if obj.product else None
