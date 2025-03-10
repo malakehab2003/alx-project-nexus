@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from ..models import Orders
+from ..models import Orders, OrderItem, CartItems, Cart
 from User.models import Notification, User
 from ..serializers import OrdersSerializer
 from User.utils.authentication import get_user_from_request
@@ -32,6 +32,23 @@ class OrdersViewSet(
             description=description
         )
 
+    def comvert_cart_items_to_order_items(self, user_id, order_id):
+        """ get all the cart items of the user and make them order items """
+        cart = Cart.objects.get(user=user_id)
+
+        order = Orders.objects.get(id=order_id)
+
+        cart_items = CartItems.objects.filter(cart=cart.id)
+        for item in cart_items:
+            OrderItem.objects.create(
+                order=order,
+                product=item.product,
+                quantity=item.quantity,
+                color=item.color,
+                size=item.size,
+            )
+            cart_items.delete()
+
     def list(self, request, *args, **kwargs):
         """ list all orders of user """
         user_id = get_user_from_request(request).get("id")
@@ -53,12 +70,19 @@ class OrdersViewSet(
         
         request.data["user"] = user_id
 
-        notification_message = "your order placed successfully"
+
+        response = super().create(request, *args, **kwargs)
+
+        if response.status_code == status.HTTP_201_CREATED:
+            order_id = response.data.get("id")
+            self.comvert_cart_items_to_order_items(user_id, order_id)
+
         notificatio_description = f"you have created a new order today at {datetime.datetime.now()}"
+        notification_message = "your order placed successfully"
 
         self.create_notification(user_id, notification_message, notificatio_description)
         
-        return super().create(request, *args, **kwargs)
+        return response
     
     @action(detail=True, methods=["put"], url_path="update_progress")
     def update_progress(self, request, *args, **kwargs):
