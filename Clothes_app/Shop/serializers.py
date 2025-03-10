@@ -21,6 +21,8 @@ class WishlistSerializer(serializers.ModelSerializer):
 
 class OrdersSerializer(serializers.ModelSerializer):
     """Serializer for the Orders model."""
+    address = serializers.StringRelatedField()
+    
     class Meta:
         model = Orders
         fields = '__all__'

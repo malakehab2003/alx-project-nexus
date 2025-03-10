@@ -72,7 +72,7 @@ class Address(models.Model):
 
     def __str__(self):
         """Return address name"""
-        return f"{self.name} - {self.user.name}"
+        return f"{self.name} - {self.state} - {self.city} - {self.address}"
     
 class PromoCode(models.Model):
     """Create a promo code model"""

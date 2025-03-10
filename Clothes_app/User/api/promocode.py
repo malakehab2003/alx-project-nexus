@@ -48,6 +48,7 @@ class PromoCodeViewSet(mixins.ListModelMixin,
 
         if getattr(promo_code.user, "id", None) == user_id:
             discounted_price = price - ((price * promo_code.discount) / 100)
+            promo_code.delete()
             return Response({"price after discount": discounted_price}, status=status.HTTP_200_OK)
         return Response({"error": "cannot apply promo code"}, status=status.HTTP_400_BAD_REQUEST)
     
