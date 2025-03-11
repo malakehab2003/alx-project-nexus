@@ -37,6 +37,8 @@ class OrdersViewSet(
         cart = Cart.objects.get(user=user_id)
 
         order = Orders.objects.get(id=order_id)
+        order.total_price = cart.total_price
+        order.save()
 
         cart_items = CartItems.objects.filter(cart=cart.id)
         for item in cart_items:
@@ -52,11 +54,15 @@ class OrdersViewSet(
     def list(self, request, *args, **kwargs):
         """ list all orders of user """
         user_id = get_user_from_request(request).get("id")
+        status = request.query_params.get("status")
 
         if not user_id:
             return Response({"error": "not autorized"}, status=status.HTTP_401_UNAUTHORIZED)
         
-        orders = Orders.objects.filter(user=user_id)
+        if status not in ["active", "cancelled", "completed"]:
+            return Response({"error": "wrong status"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        orders = Orders.objects.filter(user=user_id, status=status)
 
         serializer = self.get_serializer(orders, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

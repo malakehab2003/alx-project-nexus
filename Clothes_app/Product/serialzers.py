@@ -3,9 +3,18 @@ from .models import Product, Category, Image, Review, Brand, Size, Color
 
 class ProductSerializer(serializers.ModelSerializer):
     """Serializer for the Product model."""
+    brands_name = serializers.SerializerMethodField()
+    category_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Product
         fields = '__all__'
+
+    def get_brands_name(self, obj):
+        return [brand.name for brand in obj.brands.all()]
+
+    def get_category_name(self, obj):
+        return [category.name for category in obj.category.all()]
 
 class CategorySerializer(serializers.ModelSerializer):
     """Serializer for the Category model."""

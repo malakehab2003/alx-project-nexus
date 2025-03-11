@@ -7,7 +7,8 @@ from Product.models import Product, Color, Size
 class Cart(models.Model):
     """ Create a card model """
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    total_price = models.IntegerField(default=0)
+    total_price = models.DecimalField(max_digits=6, decimal_places=2, default=0)
+    promoCode = models.ForeignKey(PromoCode, on_delete=models.SET_NULL, null=True, blank=True)
     def __str__(self):
         return f"{self.user.name} - Cart"
     
@@ -58,6 +59,7 @@ class Orders(models.Model):
     address = models.ForeignKey(Address, on_delete=models.SET_NULL, null=True, blank=True)
     payment_type = models.CharField(max_length=100, choices=Payment.PROVIDER_CHOICES)
     promoCode = models.ForeignKey(PromoCode, on_delete=models.SET_NULL, null=True, blank=True)
+    total_price = models.DecimalField(max_digits=6, decimal_places=2, default=0)
     def __str__(self):
         return f"{self.user.name} - Order"
     

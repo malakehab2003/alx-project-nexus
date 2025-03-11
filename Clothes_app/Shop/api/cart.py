@@ -8,7 +8,6 @@ from User.utils.authentication import get_user_from_request
 from django.shortcuts import get_object_or_404
 
 
-
 class CartViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """ViewSet for the Cart model."""
     queryset = Cart.objects.all()

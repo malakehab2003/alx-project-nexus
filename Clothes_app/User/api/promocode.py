@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 from ..models import PromoCode
+from Shop.models import Cart
 from ..serialzers import PromoCodeSerializer
 from ..utils.authentication import get_user_from_request
 from django.shortcuts import get_object_or_404
@@ -40,6 +41,7 @@ class PromoCodeViewSet(mixins.ListModelMixin,
 
         promo_code_id = kwargs.get("id")
         user_id = get_user_from_request(request).get("id")
+        cart = Cart.objects.get(user=user_id)
 
         if not price or not user_id:
             return Response({"error": "no price to use promocode"}, status=status.HTTP_400_BAD_REQUEST)
@@ -49,6 +51,10 @@ class PromoCodeViewSet(mixins.ListModelMixin,
         if getattr(promo_code.user, "id", None) == user_id:
             discounted_price = price - ((price * promo_code.discount) / 100)
             promo_code.delete()
+
+            cart.total_price = discounted_price
+            cart.save()
+            
             return Response({"price after discount": discounted_price}, status=status.HTTP_200_OK)
         return Response({"error": "cannot apply promo code"}, status=status.HTTP_400_BAD_REQUEST)
     
