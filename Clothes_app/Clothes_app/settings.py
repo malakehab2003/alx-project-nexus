@@ -31,6 +31,10 @@ ALLOWED_HOSTS = [
     'alx-project-nexus-production.up.railway.app'
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://alx-project-nexus-production.up.railway.app'
+]
+
 
 # Application definition
 
