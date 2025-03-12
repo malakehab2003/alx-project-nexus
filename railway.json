@@ -1,8 +1,8 @@
 {
-    "build": {
-      "command": "pip install -r requirements.txt"
-    },
-    "start": {
-      "command": "gunicorn Clothes_app.wsgi --bind 0.0.0.0:$PORT"
-    }
+  "build": {
+    "command": "apt-get update && apt-get install -y libpq-dev && pip install -r requirements.txt"
+  },
+  "start": {
+    "command": "gunicorn Clothes_app.wsgi --bind 0.0.0.0:$PORT"
   }
+}
