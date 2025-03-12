@@ -173,7 +173,7 @@ DATABASES = {
 
         'HOST': '<PGHOST>',
 
-        'PORT': '<PGPORT>',
+        'PORT': 5432,
 
     }
 
