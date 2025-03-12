@@ -159,13 +159,15 @@ import os
 
 import dj_database_url
 
+DATABASE_URL = f"postgresql://{os.getenv('PGUSER', 'postgres')}:" \
+               f"{os.getenv('PGPASSWORD', '')}@" \
+               f"{os.getenv('PGHOST', 'localhost')}:" \
+               f"{os.getenv('PGPORT', '5432')}/" \
+               f"{os.getenv('PGDATABASE', 'railway')}"
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=f"postgresql://{os.getenv('PGUSER', 'postgres')}:"
-                f"{os.getenv('PGPASSWORD', '')}@"
-                f"{os.getenv('PGHOST', 'localhost')}:"
-                f"{os.getenv('PGPORT', '5432')}/"
-                f"{os.getenv('PGDATABASE', 'railway')}",
+        default=DATABASE_URL,
         conn_max_age=600,
         ssl_require=True
     )
