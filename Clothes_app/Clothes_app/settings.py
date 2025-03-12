@@ -160,15 +160,23 @@ import os
 import dj_database_url
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f"postgresql://{os.getenv('PGUSER', 'postgres')}:"
-                f"{os.getenv('PGPASSWORD', '')}@"
-                f"{os.getenv('PGHOST', 'localhost')}:"
-                f"{os.getenv('PGPORT', '5432')}/"
-                f"{os.getenv('PGDATABASE', 'railway')}",
-        conn_max_age=600,
-        ssl_require=True
-    )
+
+    'default': {
+
+        'ENGINE': 'django.db.backends.postgresql',
+
+        'NAME': '<PGDATABASE>',
+
+        'USER': '<PGUSER>',
+
+        'PASSWORD': '<PGPASSWORD>',
+
+        'HOST': '<PGHOST>',
+
+        'PORT': '<PGPORT>',
+
+    }
+
 }
 
 
