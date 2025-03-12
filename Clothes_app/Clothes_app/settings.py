@@ -163,7 +163,7 @@ DATABASES = {
         'NAME': os.getenv('PGDATABASE', 'clothes_project'),
         'USER': os.getenv('PGUSER', 'postgres'),
         'PASSWORD': os.getenv('PGPASSWORD', 'root'),
-        'HOST': os.getenv('PGHOST', 'localhost'),
+        'HOST': os.getenv('PGHOST', 'postgres.railway.internal'),
         'PORT': os.getenv('PGPORT', '5432'),
     }
 }
