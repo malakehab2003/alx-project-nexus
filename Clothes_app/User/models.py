@@ -49,6 +49,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     groups = models.ManyToManyField("auth.Group", related_name="custom_user_groups", blank=True)
     user_permissions = models.ManyToManyField("auth.Permission", related_name="custom_user_permissions", blank=True)
 
+    class Meta:
+        ordering = ['id']
+
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ["name", "phone"]
