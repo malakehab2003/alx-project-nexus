@@ -68,3 +68,4 @@ redis
 celery
 kombu
 psycopg2-binary
+dj_database_url
