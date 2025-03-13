@@ -159,17 +159,10 @@ import os
 
 import dj_database_url
 
-DATABASE_URL = f"postgresql://{os.getenv('PGUSER', 'postgres')}:" \
-               f"{os.getenv('PGPASSWORD', '')}@" \
-               f"{os.getenv('PGHOST', 'localhost')}:" \
-               f"{os.getenv('PGPORT', '5432')}/" \
-               f"{os.getenv('PGDATABASE', 'railway')}"
-
-print(f"Generated DATABASE_URL: {DATABASE_URL}")  # Debugging output
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=DATABASE_URL,
+        default="postgresql://postgres:WsgOGbVIAwIeDsBmVkIFjWOCUWhHpXxU@crossover.proxy.rlwy.net:42243/railway",
         conn_max_age=600,
         ssl_require=True
     )
