@@ -1,3 +1,1 @@
-web: gunicorn Clothes_app.wsgi --bind 0.0.0.0:$PORT
-web: gunicorn Clothes_app.wsgi --timeout 120
-worker: celery -A Clothes_app worker -l info -P eventlet
+web: celery -A Clothes_app worker --loglevel=info & python manage.py migrate && gunicorn Clothes_app.wsgi  --bind 0.0.0.0:$PORT && gunicorn Clothes_app.wsgi --timeout 120
