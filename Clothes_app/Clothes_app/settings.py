@@ -100,7 +100,7 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-CELERY_BROKER_URL = "pyamqp://guest@localhost//"
+CELERY_BROKER_URL = "amqp://eAnvYiclRBNF1sFv:FjFEAzjaAkRgWDX2Hri2Qsv7ymSOH5-A@nozomi.proxy.rlwy.net:20055"
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
@@ -114,11 +114,8 @@ EMAIL_HOST_PASSWORD = EMAIL_PASSWORD
 
 CACHES = {
     "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://default:nqJXLQCNlXQpupYUiLfpgGnjEWslUJlM@switchyard.proxy.rlwy.net:37586",
     }
 }
 
