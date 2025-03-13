@@ -165,6 +165,8 @@ DATABASE_URL = f"postgresql://{os.getenv('PGUSER', 'postgres')}:" \
                f"{os.getenv('PGPORT', '5432')}/" \
                f"{os.getenv('PGDATABASE', 'railway')}"
 
+print(f"Generated DATABASE_URL: {DATABASE_URL}")  # Debugging output
+
 DATABASES = {
     'default': dj_database_url.config(
         default=DATABASE_URL,
