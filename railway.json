@@ -5,7 +5,7 @@
   "start": {
     "commands": [
       "gunicorn Clothes_app.wsgi --bind 0.0.0.0:$PORT",
-      "celery -A Clothes_app worker -l info -P eventletv"
+      "celery -A Clothes_app/Clothes_app worker -l info -P eventletv"
     ]
   }
 }
