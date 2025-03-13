@@ -65,6 +65,9 @@ thank you ALX for this great chance to practice my skills to create a real world
 
 https://alx-project-nexus-production.up.railway.app/
 
+## figma link
+https://www.figma.com/design/wbplNzxzONom2ZL3IjCAMm/ALX_Project_Nexus-Ecommerce?m=auto&t=d3unqLHcgJyZuKIN-6
+
 
 # overview of the ProDev Backend Engineering program
 
